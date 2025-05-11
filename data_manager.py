@@ -161,8 +161,7 @@ def load_and_preprocess_samples(csv_path: str) -> Tuple[List[Sample], List[Sampl
     return positive_samples, filtered_negative_samples
 
 
-def get_dti_datasets(dataset, cold_fasta, cold_smiles, seed=42):
-    random.seed(seed)
+def get_dti_datasets(dataset, cold_fasta, cold_smiles):
     input_csv_file = f"data/{dataset}.csv"
     positive_samples, negative_samples = load_and_preprocess_samples(input_csv_file)
 
