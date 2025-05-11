@@ -6,13 +6,12 @@ MOLECULES = "molecules"
 REACTIONS = "reactions"
 PROTEINS = "proteins"
 
-
-
-MODEL_TO_DIM={
+MODEL_TO_DIM = {
     "rxnfp": 256,
     "ibm/MoLFormer-XL-both-10pct": 768,
     "facebook/esm2_t33_650M_UR50D": 1280,
 }
+
 
 def get_model_and_tokenizer(data_type: str, model_name, quantize=False):
     """
@@ -54,9 +53,18 @@ class QuantizeTokenizer:
         return {i: i for i in range(self.vocab_size)}
 
     def __call__(self, seq, **kwargs):
-        seq = torch.LongTensor([self.bos_token_id] + [int(x) for x in seq.split()] + [self.pad_token_id]).unsqueeze(0)
-        mask = torch.ones(seq.shape)
-        return {"input_ids": seq, "attention_mask": mask}
+        if isinstance(seq, str):
+            seq = [seq]
+        results = {"input_ids": [], "attention_mask": []}
+        for seq_ in seq:
+            seq_ = torch.LongTensor(
+                [self.bos_token_id] + [int(x) for x in seq_.split()] + [self.pad_token_id]).unsqueeze(0)
+            mask = torch.ones(seq_.shape)
+            results["input_ids"].append(seq_)
+            results["attention_mask"].append(mask)
+        results["input_ids"] = torch.cat(results["input_ids"], dim=0)
+        results["attention_mask"] = torch.cat(results["attention_mask"], dim=0)
+        return results
 
     def encode(self, seq, **kwargs):
         return self(seq, **kwargs)["input_ids"][0].tolist()

@@ -3,7 +3,7 @@ dataset: "biosnap"
 cold_fasta: false
 cold_smiles: false
 replace_src_target: false
-quantize: false
+quantize: true
 n_clusters: 15
 random_tgt: false
 
@@ -19,9 +19,9 @@ constraint: 0 # 0: trie always, 1: trie never, 2: trie only during eval
 entropy_normalize: true
 
 # Pretrained Models & Encoder Settings
-src_model_type: "MOLECULES" # Will be mapped to MOLECULES variable
+src_model_type: "molecules" # Will be mapped to MOLECULES variable
 src_model_name: "ibm/MoLFormer-XL-both-10pct"
-tgt_model_type: "PROTEINS"  # Will be mapped to PROTEINS variable
+tgt_model_type: "proteins"  # Will be mapped to PROTEINS variable
 tgt_model_name: "facebook/esm2_t33_650M_UR50D"
 train_encoder: false
 pretrained_encoder: true # If true, loads pretrained src_model. If false, builds a new BERT encoder.

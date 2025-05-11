@@ -84,6 +84,7 @@ class ResidualVectorQuantizer:
         self.is_fitted_: bool = False
         self.text_to_code_map: Dict[str, str] = {}
         self.model = model
+        self.model.to(device)
         self.tokenizer = tokenizer
         self.line_to_code: Dict[str, str] = {}
         self.random_fit = random_fit
@@ -295,9 +296,6 @@ class ResidualVectorQuantizer:
         if not self.is_fitted_:
             raise ValueError("RVQ model is not fitted. Please call fit() before transform().")
 
-        if len(lines) != len(self.line_to_code):
-            raise ValueError(
-                f"Mismatch between number of lines ({len(lines)}) and fitted lines ({len(self.line_to_code)}).")
         for line in lines:
             if line not in self.line_to_code:
                 raise ValueError(

@@ -1,0 +1,50 @@
+# Dataset and Preprocessing
+dataset: "care"
+cold_fasta: false
+cold_smiles: false
+replace_src_target: false
+quantize: false
+n_clusters: 15
+random_tgt: false
+
+# Model Architecture
+num_hidden_layers: 8
+num_attention_heads: 8
+hidden_size: 512 # For decoder and new encoder
+dropout: 0.2
+buttleneck_dim: 128
+encoder_dim: 512 # For new encoder
+pooling: true
+constraint: 0 # 0: trie always, 1: trie never, 2: trie only during eval
+entropy_normalize: true
+
+# Pretrained Models & Encoder Settings
+src_model_type: "reactions" # Will be mapped to MOLECULES variable
+src_model_name: "rxnfp" # Placeholder for actual model name
+tgt_model_type: "proteins"  # Will be mapped to PROTEINS variable
+tgt_model_name: "facebook/esm2_t33_650M_UR50D"
+train_encoder: false
+pretrained_encoder: true # If true, loads pretrained src_model. If false, builds a new BERT encoder.
+
+# DTI Evaluation (Meta Learner)
+eval_dti: true
+meta_d_model: 128
+meta_nhead: 2
+meta_num_layers: 1
+meta_dropout: 0.0
+meta_learning_rate: 0.0005
+meta_weight_decay: 0.00001 # 1E-05
+meta_num_epochs: 100
+meta_patience: 15
+
+# Training Hyperparameters
+batch_size: 64 # Can be auto-adjusted by Trainer if auto_find_batch_size=True
+steps: 25000
+log_steps: 100
+eval_steps: 300
+save_steps: 300
+learning_rate: 0.0001
+
+# Output and Logging
+output_dir: "results/biosnap_seen/" # Base directory for results
+report_to: "tensorboard"   # "none", "tensorboard", "wandb", etc.

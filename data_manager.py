@@ -334,6 +334,17 @@ def get_dti_datasets(dataset, cold_fasta, cold_smiles, seed=42):
     return train_pos_src, train_pos_tgt, train_neg_src, train_neg_tgt, valid_pos_src, valid_pos_tgt, valid_neg_src, valid_neg_tgt, test_pos_src, test_pos_tgt, test_neg_src, test_neg_tgt
 
 
+def get_care_datasets():
+    with open("data/care/train_reaction.txt", "r") as f:
+        train_pos_src = f.read().splitlines()
+    with open("data/care/train_enzyme.txt", "r") as f:
+        train_pos_tgt = f.read().splitlines()
+    with open("data/care/test_reaction.txt", "r") as f:
+        test_pos_src = f.read().splitlines()
+    with open("data/care/test_enzyme.txt", "r") as f:
+        test_pos_tgt = f.read().splitlines()
+    return train_pos_src, train_pos_tgt, test_pos_src, test_pos_tgt
+
 class SrcTgtDataset(TorchDataset):
     def __init__(self, src_texts, tgt_texts, src_tokenizer, tgt_tokenizer, src_encoder=None, max_length=256,
                  pooling=False, train_encoder=False):

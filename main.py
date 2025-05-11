@@ -272,8 +272,15 @@ if __name__ == "__main__":
 
     config = get_config()
 
-    train_pos_src, train_pos_tgt, train_neg_src, train_neg_tgt, valid_pos_src, valid_pos_tgt, valid_neg_src, valid_neg_tgt, test_pos_src, test_pos_tgt, test_neg_src, test_neg_tgt = get_dti_datasets(
-        config["dataset"], cold_fasta=config["cold_fasta"], cold_smiles=config["cold_smiles"])
+    if config['dataset'] == "care":
+        from data_manager import get_care_datasets
+
+        train_pos_src, train_pos_tgt, test_pos_src, test_pos_tgt = get_care_datasets()
+        valid_pos_src, valid_pos_tgt = [], []
+        train_neg_src, train_neg_tgt, valid_neg_src, valid_neg_tgt, test_neg_src, test_neg_tgt = [], [], [], [], [], []
+    else:
+        train_pos_src, train_pos_tgt, train_neg_src, train_neg_tgt, valid_pos_src, valid_pos_tgt, valid_neg_src, valid_neg_tgt, test_pos_src, test_pos_tgt, test_neg_src, test_neg_tgt = get_dti_datasets(
+            config["dataset"], cold_fasta=config["cold_fasta"], cold_smiles=config["cold_smiles"])
     if config["replace_src_target"]:
         train_pos_src, train_pos_tgt = train_pos_tgt, train_pos_src
         train_neg_src, train_neg_tgt = train_neg_tgt, train_neg_src
@@ -291,20 +298,23 @@ if __name__ == "__main__":
         config["dropout"], config["encoder_dim"],
         config["train_encoder"],
         config["pretrained_encoder"])
+    all_tgts = list(set(train_pos_tgt + train_neg_tgt + valid_pos_tgt + valid_neg_tgt + test_pos_tgt + test_neg_tgt))
 
     if config["quantize"]:
-        tgt_tokenizer = QuantizeTokenizer(max_token=config["n_clusters"])
-        decoder.resize_token_embeddings(len(tgt_tokenizer.get_vocab()))
-
         RVQ = ResidualVectorQuantizer(n_clusters=config["n_clusters"], model=tgt_model, tokenizer=tgt_tokenizer,
                                       random_fit=config["random_tgt"])
-        RVQ.fit(train_pos_tgt)
+
+        RVQ.fit(all_tgts)
         train_pos_tgt = RVQ.transform(train_pos_tgt)
         valid_pos_tgt = RVQ.transform(valid_pos_tgt)
         test_pos_tgt = RVQ.transform(test_pos_tgt)
         train_neg_tgt = RVQ.transform(train_neg_tgt)
         valid_neg_tgt = RVQ.transform(valid_neg_tgt)
         test_neg_tgt = RVQ.transform(test_neg_tgt)
+        all_tgts = RVQ.transform(all_tgts)
+        tgt_tokenizer = QuantizeTokenizer(max_token=config["n_clusters"])
+
+        decoder.resize_token_embeddings(len(tgt_tokenizer.get_vocab()))
 
     encoder_dim = MODEL_TO_DIM.get(config["src_model_name"], 512)
     train_dataset = SrcTgtDataset(train_pos_src, train_pos_tgt, src_tokenizer, tgt_tokenizer, src_encoder=src_model,
@@ -314,7 +324,6 @@ if __name__ == "__main__":
     test_dataset = SrcTgtDataset(test_pos_src, test_pos_tgt, src_tokenizer, tgt_tokenizer, max_length=256,
                                  src_encoder=src_model, pooling=True, train_encoder=config["train_encoder"])
 
-    all_tgts = train_pos_tgt + train_neg_tgt + valid_pos_tgt + valid_neg_tgt + test_pos_tgt + test_neg_tgt
     trie = build_trie_from_text(list(set(all_tgts)), tgt_tokenizer)
 
     # Choose the appropriate model based on whether we're training the encoder
@@ -336,13 +345,13 @@ if __name__ == "__main__":
             **common_model_args
         )
 
-    if config["eval_dti"]:
+    if config["dataset"]!="care":
         from logit_feature_transformer_pipeline import evaluate_model
 
         neg_valid_dataset = SrcTgtDataset(valid_neg_src, valid_neg_tgt, src_tokenizer, tgt_tokenizer, max_length=256,
-                                          pooling=True, train_encoder=config["train_encoder"])
+                                          src_encoder=src_model, pooling=True, train_encoder=config["train_encoder"])
         neg_test_dataset = SrcTgtDataset(test_neg_src, test_neg_tgt, src_tokenizer, tgt_tokenizer, max_length=256,
-                                         pooling=True, train_encoder=config["train_encoder"])
+                                         src_encoder=src_model, pooling=True, train_encoder=config["train_encoder"])
         compute_metrics_func = lambda x: evaluate_model(valid_pos_dataset=valid_dataset,
                                                         valid_neg_dataset=neg_valid_dataset,
                                                         test_pos_dataset=test_dataset,
@@ -366,8 +375,7 @@ if __name__ == "__main__":
         compute_metrics_func = lambda x: compute_metrics(x)
         train_small_indices = np.random.choice(len(train_dataset), len(test_dataset), replace=False)
         train_small_dataset = torch.utils.data.Subset(train_dataset, train_small_indices)
-
-        eval_dataset = {"test": test_dataset, "train": train_small_dataset, "valid": valid_dataset}
+        eval_dataset = {"test": test_dataset, "train": train_small_dataset}
         metric_for_best_model = "eval_test_token_accuracy"
 
     print("Src model:")
@@ -411,7 +419,7 @@ if __name__ == "__main__":
     )
     eval_logging_callback = EvalLoggingCallback(output_dir=output_dir)
     trainer.add_callback(eval_logging_callback)
-
+    trainer.evaluate()
     # Train model
     print("Training model...")
     trainer.train()

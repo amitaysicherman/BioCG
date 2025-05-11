@@ -383,8 +383,8 @@ def evaluate_model(valid_pos_dataset, valid_neg_dataset, test_pos_dataset, test_
     test_log_prob_mean = []
     for i in range(X_test.shape[0]):
         logs_prob = X_test[i][:, 0]
-    logs_prob = logs_prob[logs_prob != 0]
-    test_log_prob_mean.append(logs_prob.mean())
+        logs_prob = logs_prob[logs_prob != 0]
+        test_log_prob_mean.append(logs_prob.mean())
 
     log_prob_results = get_metrics(test_labels, test_log_prob_mean)
     log_prob_results = {f"log_prob_{k}": v for k, v in log_prob_results.items()}
