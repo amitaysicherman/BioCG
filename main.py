@@ -278,6 +278,10 @@ if __name__ == "__main__":
         train_pos_src, train_pos_tgt, test_pos_src, test_pos_tgt = get_care_datasets()
         valid_pos_src, valid_pos_tgt = [], []
         train_neg_src, train_neg_tgt, valid_neg_src, valid_neg_tgt, test_neg_src, test_neg_tgt = [], [], [], [], [], []
+    elif config['dataset'] == "ddi":
+        from data_manager import get_ddi_datasets
+
+        train_pos_src, train_pos_tgt, train_neg_src, train_neg_tgt, valid_pos_src, valid_pos_tgt, valid_neg_src, valid_neg_tgt, test_pos_src, test_pos_tgt, test_neg_src, test_neg_tgt = get_ddi_datasets()
     else:
         train_pos_src, train_pos_tgt, train_neg_src, train_neg_tgt, valid_pos_src, valid_pos_tgt, valid_neg_src, valid_neg_tgt, test_pos_src, test_pos_tgt, test_neg_src, test_neg_tgt = get_dti_datasets(
             config["dataset"], cold_fasta=config["cold_fasta"], cold_smiles=config["cold_smiles"])
@@ -345,7 +349,7 @@ if __name__ == "__main__":
             **common_model_args
         )
 
-    if config["dataset"]!="care":
+    if config["dataset"] != "care":
         from logit_feature_transformer_pipeline import evaluate_model
 
         neg_valid_dataset = SrcTgtDataset(valid_neg_src, valid_neg_tgt, src_tokenizer, tgt_tokenizer, max_length=256,

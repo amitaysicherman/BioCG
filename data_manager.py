@@ -344,6 +344,27 @@ def get_care_datasets():
         test_pos_tgt = f.read().splitlines()
     return train_pos_src, train_pos_tgt, test_pos_src, test_pos_tgt
 
+
+def get_ddi_datasets():
+    train_df = pd.read_csv("data/ddi/train.csv")
+    train_pos_src = train_df[train_df["Y"] == 1]["SMILES1"].tolist()
+    train_pos_tgt = train_df[train_df["Y"] == 1]["SMILES2"].tolist()
+    train_neg_src = train_df[train_df["Y"] == 0]["SMILES1"].tolist()
+    train_neg_tgt = train_df[train_df["Y"] == 0]["SMILES2"].tolist()
+    test_df = pd.read_csv("data/ddi/unseen_one_drug.csv")
+    valid_test_pos_src = test_df[test_df["Y"] == 1]["SMILES1"].tolist()
+    valid_test_pos_tgt = test_df[test_df["Y"] == 1]["SMILES2"].tolist()
+    valid_test_neg_src = test_df[test_df["Y"] == 0]["SMILES1"].tolist()
+    valid_test_neg_tgt = test_df[test_df["Y"] == 0]["SMILES2"].tolist()
+    valid_pos_src = valid_test_pos_src[:len(valid_test_pos_src) // 2]
+    valid_pos_tgt = valid_test_pos_tgt[:len(valid_test_pos_tgt) // 2]
+    valid_neg_src = valid_test_neg_src[:len(valid_test_neg_src) // 2]
+    valid_neg_tgt = valid_test_neg_tgt[:len(valid_test_neg_tgt) // 2]
+    test_pos_src = valid_test_pos_src[len(valid_test_pos_src) // 2:]
+    test_pos_tgt = valid_test_pos_tgt[len(valid_test_pos_tgt) // 2:]
+    test_neg_src = valid_test_neg_src[len(valid_test_neg_src) // 2:]
+    test_neg_tgt = valid_test_neg_tgt[len(valid_test_neg_tgt) // 2:]
+    return train_pos_src, train_pos_tgt, train_neg_src, train_neg_tgt, valid_pos_src, valid_pos_tgt, valid_neg_src, valid_neg_tgt, test_pos_src, test_pos_tgt, test_neg_src, test_neg_tgt
 class SrcTgtDataset(TorchDataset):
     def __init__(self, src_texts, tgt_texts, src_tokenizer, tgt_tokenizer, src_encoder=None, max_length=256,
                  pooling=False, train_encoder=False):
@@ -430,6 +451,7 @@ if __name__ == "__main__":
     cold_fasta = True  # Set to True for cold split by FASTA
     cold_smiles = False  # Set to True for cold split by SMILES
 
-    train_pos_src, train_pos_tgt, train_neg_src, train_neg_tgt, valid_pos_src, valid_pos_tgt, valid_neg_src, valid_neg_tgt, test_pos_src, test_pos_tgt, test_neg_src, test_neg_tgt = get_dti_datasets(input_csv_file, cold_fasta, cold_smiles)
+    train_pos_src, train_pos_tgt, train_neg_src, train_neg_tgt, valid_pos_src, valid_pos_tgt, valid_neg_src, valid_neg_tgt, test_pos_src, test_pos_tgt, test_neg_src, test_neg_tgt = get_dti_datasets(
+        input_csv_file, cold_fasta, cold_smiles)
     # Example of how to use the dataset
     a = 2
