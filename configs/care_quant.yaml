@@ -12,7 +12,7 @@ num_hidden_layers: 8
 num_attention_heads: 8
 hidden_size: 512 # For decoder and new encoder
 dropout: 0.2
-buttleneck_dim: 128
+buttleneck_dim: -1
 encoder_dim: 512 # For new encoder
 pooling: false
 constraint: 0 # 0: trie always, 1: trie never, 2: trie only during eval
