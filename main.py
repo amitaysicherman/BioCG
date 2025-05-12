@@ -360,8 +360,7 @@ if __name__ == "__main__":
         if config['dataset'] == "ddi":
             compute_metrics_func = lambda x: evaluate_model_logits(test_pos_dataset=test_dataset,
                                                                    test_neg_dataset=neg_test_dataset, model=model,
-                                                                   batch_size=
-                                                                   config["batch_size"])
+                                                                   batch_size=config["batch_size"])
         else:
 
             compute_metrics_func = lambda x: evaluate_model(valid_pos_dataset=valid_dataset,
@@ -431,7 +430,7 @@ if __name__ == "__main__":
     )
     eval_logging_callback = EvalLoggingCallback(output_dir=output_dir)
     trainer.add_callback(eval_logging_callback)
-    trainer.evaluate()
+    # trainer.evaluate()
     # Train model
     print("Training model...")
     trainer.train()

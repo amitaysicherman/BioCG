@@ -421,5 +421,4 @@ def evaluate_model_logits(test_pos_dataset, test_neg_dataset, model, batch_size=
         logs_prob = logs_prob[logs_prob != 0]
         test_log_prob_mean.append(logs_prob.mean())
     log_prob_results = get_metrics(test_labels, test_log_prob_mean)
-    log_prob_results = {f"log_prob_{k}": v for k, v in log_prob_results.items()}
     return log_prob_results
