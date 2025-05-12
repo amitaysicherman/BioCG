@@ -14,7 +14,7 @@ hidden_size: 512 # For decoder and new encoder
 dropout: 0.2
 buttleneck_dim: 128
 encoder_dim: 512 # For new encoder
-pooling: true
+pooling: false
 constraint: 0 # 0: trie always, 1: trie never, 2: trie only during eval
 entropy_normalize: true
 

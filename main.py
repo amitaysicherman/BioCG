@@ -322,11 +322,11 @@ if __name__ == "__main__":
 
     encoder_dim = MODEL_TO_DIM.get(config["src_model_name"], 512)
     train_dataset = SrcTgtDataset(train_pos_src, train_pos_tgt, src_tokenizer, tgt_tokenizer, src_encoder=src_model,
-                                  max_length=256, pooling=True, train_encoder=config["train_encoder"])
+                                  max_length=256, pooling=config['pooling'], train_encoder=config["train_encoder"])
     valid_dataset = SrcTgtDataset(valid_pos_src, valid_pos_tgt, src_tokenizer, tgt_tokenizer, max_length=256,
-                                  src_encoder=src_model, pooling=True, train_encoder=config["train_encoder"])
+                                  src_encoder=src_model, pooling=config['pooling'], train_encoder=config["train_encoder"])
     test_dataset = SrcTgtDataset(test_pos_src, test_pos_tgt, src_tokenizer, tgt_tokenizer, max_length=256,
-                                 src_encoder=src_model, pooling=True, train_encoder=config["train_encoder"])
+                                 src_encoder=src_model, pooling=config['pooling'], train_encoder=config["train_encoder"])
 
     trie = build_trie_from_text(list(set(all_tgts)), tgt_tokenizer)
 
@@ -353,9 +353,9 @@ if __name__ == "__main__":
         from logit_feature_transformer_pipeline import evaluate_model, evaluate_model_logits
 
         neg_valid_dataset = SrcTgtDataset(valid_neg_src, valid_neg_tgt, src_tokenizer, tgt_tokenizer, max_length=256,
-                                          src_encoder=src_model, pooling=True, train_encoder=config["train_encoder"])
+                                          src_encoder=src_model, pooling=config['pooling'], train_encoder=config["train_encoder"])
         neg_test_dataset = SrcTgtDataset(test_neg_src, test_neg_tgt, src_tokenizer, tgt_tokenizer, max_length=256,
-                                         src_encoder=src_model, pooling=True, train_encoder=config["train_encoder"])
+                                         src_encoder=src_model, pooling=config['pooling'], train_encoder=config["train_encoder"])
 
         if config['dataset'] == "ddi":
             compute_metrics_func = lambda x: evaluate_model_logits(test_pos_dataset=test_dataset,
