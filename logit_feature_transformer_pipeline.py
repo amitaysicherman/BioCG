@@ -342,6 +342,7 @@ def evaluate_model(valid_pos_dataset, valid_neg_dataset, test_pos_dataset, test_
                    weight_decay=1E-05,
                    num_epochs=100,
                    patience=15,
+                   only_logits=False
                    ):
     valid_pos_loader = DataLoader(valid_pos_dataset, batch_size=batch_size, shuffle=True)
     valid_neg_loader = DataLoader(valid_neg_dataset, batch_size=batch_size, shuffle=True)
@@ -376,9 +377,11 @@ def evaluate_model(valid_pos_dataset, valid_neg_dataset, test_pos_dataset, test_
 
     X_valid, y_valid = prepare_sequence_data(valid_features, valid_lengths, valid_labels, max_seq_length)
     X_test, y_test = prepare_sequence_data(test_features, test_lengths, test_labels, max_seq_length)
-    results = run_training(X_valid, y_valid, X_test, y_test, d_model, nhead, num_layers, dropout, batch_size,
-                           learning_rate, weight_decay, num_epochs, patience)
-
+    if not only_logits:
+        results = run_training(X_valid, y_valid, X_test, y_test, d_model, nhead, num_layers, dropout, batch_size,
+                               learning_rate, weight_decay, num_epochs, patience)
+    else:
+        results = {}
     # evaluate only for log_prob mean
     test_log_prob_mean = []
     for i in range(X_test.shape[0]):
@@ -390,3 +393,33 @@ def evaluate_model(valid_pos_dataset, valid_neg_dataset, test_pos_dataset, test_
     log_prob_results = {f"log_prob_{k}": v for k, v in log_prob_results.items()}
     results.update(log_prob_results)
     return results
+
+
+
+def evaluate_model_logits(test_pos_dataset, test_neg_dataset, model, batch_size=32):
+    test_pos_loader = DataLoader(test_pos_dataset, batch_size=batch_size, shuffle=False)
+    test_neg_loader = DataLoader(test_neg_dataset, batch_size=batch_size, shuffle=False)
+    pos_loader = test_pos_loader
+    neg_loader = test_neg_loader
+
+    pos_logits, pos_labels = get_batch_logits(model, pos_loader)
+    neg_logits, neg_labels = get_batch_logits(model, neg_loader)
+
+    pos_features, pos_len = data_split_to_features(pos_logits, pos_labels)
+    neg_features, neg_len = data_split_to_features(neg_logits, neg_labels)
+
+    all_features = np.concatenate([pos_features, neg_features], axis=0)
+    all_len = np.concatenate([pos_len, neg_len], axis=0)
+    labels = np.concatenate([np.ones(len(pos_len)), np.zeros(len(neg_len))], axis=0)
+
+    test_features, test_lengths, test_labels = (all_features, all_len, labels)
+    max_seq_length = np.max(test_lengths)
+    X_test, y_test = prepare_sequence_data(test_features, test_lengths, test_labels, max_seq_length)
+    test_log_prob_mean = []
+    for i in range(X_test.shape[0]):
+        logs_prob = X_test[i][:, 0]
+        logs_prob = logs_prob[logs_prob != 0]
+        test_log_prob_mean.append(logs_prob.mean())
+    log_prob_results = get_metrics(test_labels, test_log_prob_mean)
+    log_prob_results = {f"log_prob_{k}": v for k, v in log_prob_results.items()}
+    return log_prob_results
