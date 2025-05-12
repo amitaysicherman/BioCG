@@ -357,25 +357,20 @@ if __name__ == "__main__":
         neg_test_dataset = SrcTgtDataset(test_neg_src, test_neg_tgt, src_tokenizer, tgt_tokenizer, max_length=256,
                                          src_encoder=src_model, pooling=config['pooling'], train_encoder=config["train_encoder"])
 
-        if config['dataset'] == "ddi":
-            compute_metrics_func = lambda x: evaluate_model_logits(test_pos_dataset=test_dataset,
-                                                                   test_neg_dataset=neg_test_dataset, model=model,
-                                                                   batch_size=config["batch_size"])
-        else:
 
-            compute_metrics_func = lambda x: evaluate_model(valid_pos_dataset=valid_dataset,
-                                                            valid_neg_dataset=neg_valid_dataset,
-                                                            test_pos_dataset=test_dataset,
-                                                            test_neg_dataset=neg_test_dataset, model=model,
-                                                            batch_size=config["batch_size"],
-                                                            d_model=config["meta_d_model"],
-                                                            nhead=config["meta_nhead"],
-                                                            num_layers=config["meta_num_layers"],
-                                                            dropout=config["meta_dropout"],
-                                                            learning_rate=config["meta_learning_rate"],
-                                                            weight_decay=config["meta_weight_decay"],
-                                                            num_epochs=config["meta_num_epochs"],
-                                                            patience=config["meta_patience"])
+        compute_metrics_func = lambda x: evaluate_model(valid_pos_dataset=valid_dataset,
+                                                        valid_neg_dataset=neg_valid_dataset,
+                                                        test_pos_dataset=test_dataset,
+                                                        test_neg_dataset=neg_test_dataset, model=model,
+                                                        batch_size=config["batch_size"],
+                                                        d_model=config["meta_d_model"],
+                                                        nhead=config["meta_nhead"],
+                                                        num_layers=config["meta_num_layers"],
+                                                        dropout=config["meta_dropout"],
+                                                        learning_rate=config["meta_learning_rate"],
+                                                        weight_decay=config["meta_weight_decay"],
+                                                        num_epochs=config["meta_num_epochs"],
+                                                        patience=config["meta_patience"])
 
         test_dataset_dummy = torch.utils.data.Subset(test_dataset, [0])
         eval_dataset = {"valid": test_dataset_dummy}
