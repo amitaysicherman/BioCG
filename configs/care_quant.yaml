@@ -39,10 +39,10 @@ meta_patience: 15
 
 # Training Hyperparameters
 batch_size: 64 # Can be auto-adjusted by Trainer if auto_find_batch_size=True
-steps: 25000
-log_steps: 100
-eval_steps: 300
-save_steps: 300
+steps: 100000
+log_steps: 1000
+eval_steps: 5000
+save_steps: 5000
 learning_rate: 0.0001
 
 # Output and Logging
