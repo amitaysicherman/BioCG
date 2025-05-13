@@ -16,6 +16,16 @@ import numpy as np
 import torch
 from sklearn.cluster import KMeans
 from tqdm import tqdm
+import random
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
 
 # Configure logging
 logging.basicConfig(
@@ -71,7 +81,7 @@ class ResidualVectorQuantizer:
         """
         if n_clusters <= 1:
             raise ValueError("n_clusters must be greater than 1.")
-
+        set_seed(random_state)
         self.n_clusters = n_clusters
         self.max_layers = max_layers
         self.max_stagnation_steps = max_stagnation_steps
@@ -219,7 +229,8 @@ class ResidualVectorQuantizer:
                 self.n_layers_fitted_ -= 1  # Decrement as this layer won't be added
                 break
             if self.random_fit:
-                layer_predictions = np.random.randint(0, self.n_clusters, size=num_samples)
+                rng = np.random.RandomState(self.random_state)
+                layer_predictions = rng.randint(0, self.n_clusters, size=num_samples)
                 centroids = np.zeros_like(residual)
             else:
                 kmeans = KMeans(
@@ -261,7 +272,8 @@ class ResidualVectorQuantizer:
                             f"Layer {self.n_layers_fitted_}: Max stagnation steps reached. Adding random noise to residuals."
                         )
                         noise_std = self.noise_factor * current_residual_std
-                        residual += np.random.normal(0, noise_std, residual.shape)
+                        rng = np.random.RandomState(self.random_state)
+                        residual += rng.normal(0, noise_std, residual.shape)
                         stagnation_counter = 0  # Reset counter after adding noise
                     else:
                         logger.warning(
