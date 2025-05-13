@@ -10,6 +10,8 @@ MODEL_TO_DIM = {
     "rxnfp": 256,
     "ibm/MoLFormer-XL-both-10pct": 768,
     "facebook/esm2_t33_650M_UR50D": 1280,
+    "seyonec/ChemBERTa-zinc-base-v1": 768,
+    "Rostlab/prot_bert": 1024
 }
 
 
