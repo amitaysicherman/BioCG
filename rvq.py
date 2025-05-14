@@ -60,6 +60,7 @@ class ResidualVectorQuantizer:
             kmeans_kwargs: Optional[Dict[str, Any]] = None,
             random_state: Optional[int] = 42,
             random_fit: Optional[bool] = False,
+            save_file=None,
     ):
         """
         Initialize the ResidualVectorQuantizer.
@@ -98,6 +99,7 @@ class ResidualVectorQuantizer:
         self.tokenizer = tokenizer
         self.line_to_code: Dict[str, str] = {}
         self.random_fit = random_fit
+        self.save_file = save_file
 
     def _convert_labels_to_comparable_codes(
             self, layered_labels: List[np.ndarray]
@@ -295,6 +297,12 @@ class ResidualVectorQuantizer:
         self.is_fitted_ = True
         logger.info(f"RVQ fitting completed with {self.n_layers_fitted_} layers.")
         self.create_line_to_code_map(lines, codes)
+        if self.save_file is not None:
+            logger.info(f"Saving RVQ model to {self.save_file}.")
+            with open(self.save_file, "w") as f:
+                for line, code in self.line_to_code.items():
+                    f.write(f"{line}\t{code}\n")
+
 
     def transform(self, lines: List[str]) -> np.ndarray:
         """
