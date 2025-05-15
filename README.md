@@ -1,16 +1,9 @@
-<p align="center">
-  <img src="assets/method.png" alt="BioCG Framework Diagram" width="700"/>
-  <br/>
-  <em>Figure 1: The BioCG framework. (A) Target entity representation. (B1) Trie construction. (B2) Constrained decoding mask. (C) Constrained generation.</em>
-  <br/>
-  <em>(Ensure `method.png` from your paper is in an `assets` directory, or update the path.)</em>
-</p>
-
 # BioCG: Constrained Generative Modeling for Biochemical Interaction Prediction
 
 [![Paper](https://img.shields.io/badge/paper-NeurIPS%202025-B31B1B.svg)](https://link_to_your_neurips_paper_or_arxiv_page) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) This repository provides the official PyTorch implementation for the paper: **"BioCG: Constrained Generative Modeling for Biochemical Interaction Prediction"** by Amitay Sicherman and Kira Radinsky, presented at NeurIPS 2025 (Track on Datasets and Benchmarks).
 
 ##  Abstract
+![BioCG Framework](img/BioCG.png)
 
 Predicting interactions between biochemical entities is a core challenge in drug discovery and systems biology, often hindered by limited data and poor generalization to unseen entities. We propose **BioCG (Biochemical Constrained Generation)**, a novel framework that reformulates interaction prediction as a constrained sequence generation task. BioCG encodes target entities as unique discrete sequences via Iterative Residual Vector Quantization (I-RVQ) and trains a generative model to produce the sequence of an interacting partner given a query entity. A trie-guided constrained decoding mechanism ensures all outputs are biochemically valid. An information-weighted training objective further focuses learning. BioCG achieves state-of-the-art (SOTA) performance across diverse tasks (DTI, DDI, Enzyme-Reaction Prediction), especially in cold-start conditions, offering a robust and data-efficient solution for in-silico biochemical discovery.
 
