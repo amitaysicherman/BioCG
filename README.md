@@ -1,6 +1,6 @@
 # BioCG: Constrained Generative Modeling for Biochemical Interaction Prediction
 
-[![Paper](https://img.shields.io/badge/paper-NeurIPS%202025-B31B1B.svg)](https://link_to_your_neurips_paper_or_arxiv_page) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) This repository provides the official PyTorch implementation for the paper: **"BioCG: Constrained Generative Modeling for Biochemical Interaction Prediction"** by Amitay Sicherman and Kira Radinsky, presented at NeurIPS 2025 (Track on Datasets and Benchmarks).
+[![Paper](https://img.shields.io/badge/paper-NeurIPS%202025-B31B1B.svg)](https://link_to_your_neurips_paper_or_arxiv_page) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) This repository provides the official PyTorch implementation for the paper: **"BioCG: Constrained Generative Modeling for Biochemical Interaction Prediction"**
 
 ##  Abstract
 ![BioCG Framework](img/BioCG.png)
@@ -42,7 +42,7 @@ BioCG's methodology can be broken down into the following key stages:
     * This can be a direct **Log Probability Score** from the generator.
     * Alternatively, a lightweight **Meta-Model** (Transformer-based) can be trained to take features from the generation process (token probabilities, branching factors, entropy) and output a calibrated binary interaction score.
 
-## 📊 Results Highlights
+##  Results Highlights
 
 BioCG demonstrates significant improvements over existing methods across multiple benchmarks:
 
