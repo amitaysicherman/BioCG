@@ -1,6 +1,6 @@
 # BioCG: Constrained Generative Modeling for Biochemical Interaction Prediction
 
-[![Paper](https://img.shields.io/badge/paper-NeurIPS%202025-B31B1B.svg)](https://link_to_your_neurips_paper_or_arxiv_page) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) This repository provides the official PyTorch implementation for the paper: **"BioCG: Constrained Generative Modeling for Biochemical Interaction Prediction"**
+This repository provides the official PyTorch implementation for the paper: **"BioCG: Constrained Generative Modeling for Biochemical Interaction Prediction"**
 
 ##  Abstract
 ![BioCG Framework](img/BioCG.png)
