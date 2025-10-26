@@ -90,7 +90,7 @@ Dataset loading, preprocessing, and splitting are handled by `src/data_manager.p
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/ANON/BioCG.git](https://github.com/ANON/BioCG.git) 
+    git clone [https://github.com/amitaysicherman/BioCG.git](https://github.com/amitaysicherman/BioCG.git) 
     cd BioCG
     ```
 
